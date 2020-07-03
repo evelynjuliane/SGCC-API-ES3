@@ -1,29 +1,52 @@
-﻿using BenchmarkDotNet.Reports;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
-using DocumentFormat.OpenXml.Wordprocessing;
+﻿
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SGCC_API.Model;
+using SGCC_API.Model.Enum;
+using SGCC_API.Repository;
 using SGCC_API.Services;
 using SGCC_API.ViewModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace SGCC_API.Controllers
 {
-    [Route("recepcao")]
+    [Route("/recepcao")]
+    [ApiController]
     public class RecepcaoController : ControllerBase
     {
-        private readonly RecepcaoServices _service;
-        public RecepcaoController(RecepcaoServices service)
+        private readonly ApplicationDbContext _repository;
+
+        public RecepcaoController(ApplicationDbContext repository)
         {
-            _service = service;
+            _repository = repository;
         }
-        /// <summary>
-        /// Deletes a specific TodoItem.
-        /// </summary>
+        //private readonly RecepcaoServices _service;
+        //public RecepcaoController(RecepcaoServices service)
+        //{
+        //    _service = service;
+        //}
+
         [HttpPost("/salvarvisitante")]
-        public IActionResult SalvarPessoa(FilterSalvaPessoaRecepcao filter)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult SalvarVisitante([FromQuery]FilterSalvaPessoaRecepcao filter)
         {
             if (ModelState.IsValid)
             {
-                _service.SalvarVisitante(filter);
+                //_service.SalvarVisitante(filter);
+                Visitante visitante = new Visitante();
+                
+
+                visitante.Nome = filter.Nome;
+                visitante.Documento = filter.Documento;
+                visitante.Email = filter.Email;
+                visitante.Telefone = filter.Telefone;
+                visitante.TipoPessoa = filter.TipoDePessoa;
+
+
+
+                _repository.Visitantes.Add(visitante);
+                _repository.SaveChanges();
 
                 Response.StatusCode = 201;
                 return new ObjectResult("");

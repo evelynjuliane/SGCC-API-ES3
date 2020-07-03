@@ -7,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Http;
-
 namespace SGCC_API.Services
 {
     public class RecepcaoServices 
@@ -22,21 +20,21 @@ namespace SGCC_API.Services
 
         public void SalvarVisitante(FilterSalvaPessoaRecepcao filter)
         {
-            Visitante visitante = new Visitante();
+            //Visitante visitante = new Visitante();
 
-            visitante.Nome = filter.Nome;
-            visitante.Documento = filter.Documento;
-            visitante.Email = filter.Email;
-            visitante.Telefone = filter.Telefone;
-
-            if (filter.TipoDePessoa == "Associado")
-                visitante.TipoPessoa = ETipoRecepcao.Associado;
-            if (filter.TipoDePessoa == "Visitante Cliente")
-                visitante.TipoPessoa = ETipoRecepcao.VisitanteCliente;
-            if (filter.TipoDePessoa == "Visitante Serviço")
-                visitante.TipoPessoa = ETipoRecepcao.VisitanteServiço;
-
-            _repository.SaveChanges();
+            //visitante.Nome = filter.Nome;
+            //visitante.Documento = filter.Documento;
+            //visitante.Email = filter.Email;
+            //visitante.Telefone = filter.Telefone;
+            //visitante.TipoPessoa = filter.TipoDePessoa;
+            //if (filter.TipoDePessoa == "Associado")
+            //    visitante.TipoPessoa = ETipoRecepcao.Associado;
+            //if (filter.TipoDePessoa == "Visitante Cliente")
+            //    visitante.TipoPessoa = ETipoRecepcao.VisitanteCliente;
+            //if (filter.TipoDePessoa == "Visitante Serviço")
+            //    visitante.TipoPessoa = ETipoRecepcao.VisitanteServiço;
+           
+            //_repository.SaveChanges();
         }
 
     }
