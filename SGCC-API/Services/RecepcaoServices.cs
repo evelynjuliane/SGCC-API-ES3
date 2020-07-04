@@ -18,7 +18,7 @@ namespace SGCC_API.Services
             _repository = repository;
         }
 
-        public void SalvarVisitante(FilterSalvaPessoaRecepcao filter)
+        public void SalvarVisitante(FilterSalvarVisitante filter)
         {
             //Visitante visitante = new Visitante();
 

@@ -1,20 +1,21 @@
-﻿using System;
+﻿using SGCC_API.Model;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SGCC_API.Model
+namespace SGCC_API.ViewModel
 {
-    public class Local
+    public class FilterSalvarLocal
     {
-        [Key]
+
         public int IdLocal { get; set; }
         public int Andar { get; set; }
         public int Numero { get; set; }
         public float TamanhoM2 { get; set; }
         public double Valor { get; set; }
-        public Empresa Locatario { get; set; }
-        public Empresa Locador { get; set; }
+        public int Locatario { get; set; }
+        public int Locador { get; set; }
     }
+
 }

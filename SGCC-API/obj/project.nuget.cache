@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "zMB00/Xn6mLln90bZ+8i0Kl/MI/voI9XaI6Rur/+Nkr2M+fvcRZd4qspceVxAbpLJb50bqLHiZHFgdILeQXyig==",
+  "dgSpecHash": "gcTBktiPBgQM/BMynCnpL1dWhpPmbstLMGRMNLWiyVa8bBO8/58NRauEy0JJAHOAM/PTNaJHuJPyKhXA8s1jQw==",
   "success": true,
   "projectFilePath": "C:\\Users\\ejdh\\source\\repos\\SGCC-API\\SGCC-API\\SGCC-API.csproj",
   "expectedPackageFiles": [
@@ -15,6 +15,7 @@
     "C:\\Users\\ejdh\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\3.1.5\\microsoft.entityframeworkcore.analyzers.3.1.5.nupkg.sha512",
     "C:\\Users\\ejdh\\.nuget\\packages\\microsoft.entityframeworkcore.design\\3.1.5\\microsoft.entityframeworkcore.design.3.1.5.nupkg.sha512",
     "C:\\Users\\ejdh\\.nuget\\packages\\microsoft.entityframeworkcore.relational\\3.1.5\\microsoft.entityframeworkcore.relational.3.1.5.nupkg.sha512",
+    "C:\\Users\\ejdh\\.nuget\\packages\\microsoft.entityframeworkcore.tools\\3.1.5\\microsoft.entityframeworkcore.tools.3.1.5.nupkg.sha512",
     "C:\\Users\\ejdh\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "C:\\Users\\ejdh\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\3.1.5\\microsoft.extensions.caching.abstractions.3.1.5.nupkg.sha512",
     "C:\\Users\\ejdh\\.nuget\\packages\\microsoft.extensions.caching.memory\\3.1.5\\microsoft.extensions.caching.memory.3.1.5.nupkg.sha512",
