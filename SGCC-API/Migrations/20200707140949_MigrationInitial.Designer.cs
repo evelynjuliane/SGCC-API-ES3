@@ -9,7 +9,7 @@ using SGCC_API.Repository;
 namespace SGCC_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200703233521_MigrationInitial")]
+    [Migration("20200707140949_MigrationInitial")]
     partial class MigrationInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,7 +48,7 @@ namespace SGCC_API.Migrations
 
                     b.HasKey("IdEmpresa");
 
-                    b.ToTable("Empresa");
+                    b.ToTable("Empresas");
                 });
 
             modelBuilder.Entity("SGCC_API.Model.Local", b =>
@@ -82,6 +82,52 @@ namespace SGCC_API.Migrations
                     b.HasIndex("LocatarioIdEmpresa");
 
                     b.ToTable("Locais");
+                });
+
+            modelBuilder.Entity("SGCC_API.Model.LogRecepcao", b =>
+                {
+                    b.Property<int>("IdLog")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RecepcaoEntradaIdRecepcao")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RecepcaoSaidaIdRecepcao")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("VisitanteIdVisitante")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("dataEntrada")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("dataSaida")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("IdLog");
+
+                    b.HasIndex("RecepcaoEntradaIdRecepcao");
+
+                    b.HasIndex("RecepcaoSaidaIdRecepcao");
+
+                    b.HasIndex("VisitanteIdVisitante");
+
+                    b.ToTable("Logs");
+                });
+
+            modelBuilder.Entity("SGCC_API.Model.Recepcao", b =>
+                {
+                    b.Property<int>("IdRecepcao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("NomeEntrada")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("IdRecepcao");
+
+                    b.ToTable("Recepcoes");
                 });
 
             modelBuilder.Entity("SGCC_API.Model.Visitante", b =>
@@ -122,6 +168,21 @@ namespace SGCC_API.Migrations
                     b.HasOne("SGCC_API.Model.Empresa", "Locatario")
                         .WithMany()
                         .HasForeignKey("LocatarioIdEmpresa");
+                });
+
+            modelBuilder.Entity("SGCC_API.Model.LogRecepcao", b =>
+                {
+                    b.HasOne("SGCC_API.Model.Recepcao", "RecepcaoEntrada")
+                        .WithMany()
+                        .HasForeignKey("RecepcaoEntradaIdRecepcao");
+
+                    b.HasOne("SGCC_API.Model.Recepcao", "RecepcaoSaida")
+                        .WithMany()
+                        .HasForeignKey("RecepcaoSaidaIdRecepcao");
+
+                    b.HasOne("SGCC_API.Model.Visitante", "Visitante")
+                        .WithMany()
+                        .HasForeignKey("VisitanteIdVisitante");
                 });
 #pragma warning restore 612, 618
         }

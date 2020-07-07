@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SGCC_API.Migrations
@@ -8,7 +9,7 @@ namespace SGCC_API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Empresa",
+                name: "Empresas",
                 columns: table => new
                 {
                     IdEmpresa = table.Column<int>(nullable: false)
@@ -23,7 +24,20 @@ namespace SGCC_API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Empresa", x => x.IdEmpresa);
+                    table.PrimaryKey("PK_Empresas", x => x.IdEmpresa);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Recepcoes",
+                columns: table => new
+                {
+                    IdRecepcao = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    NomeEntrada = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Recepcoes", x => x.IdRecepcao);
                 });
 
             migrationBuilder.CreateTable(
@@ -61,16 +75,51 @@ namespace SGCC_API.Migrations
                 {
                     table.PrimaryKey("PK_Locais", x => x.IdLocal);
                     table.ForeignKey(
-                        name: "FK_Locais_Empresa_LocadorIdEmpresa",
+                        name: "FK_Locais_Empresas_LocadorIdEmpresa",
                         column: x => x.LocadorIdEmpresa,
-                        principalTable: "Empresa",
+                        principalTable: "Empresas",
                         principalColumn: "IdEmpresa",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Locais_Empresa_LocatarioIdEmpresa",
+                        name: "FK_Locais_Empresas_LocatarioIdEmpresa",
                         column: x => x.LocatarioIdEmpresa,
-                        principalTable: "Empresa",
+                        principalTable: "Empresas",
                         principalColumn: "IdEmpresa",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Logs",
+                columns: table => new
+                {
+                    IdLog = table.Column<int>(nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    VisitanteIdVisitante = table.Column<int>(nullable: true),
+                    RecepcaoEntradaIdRecepcao = table.Column<int>(nullable: true),
+                    dataEntrada = table.Column<DateTime>(nullable: false),
+                    RecepcaoSaidaIdRecepcao = table.Column<int>(nullable: true),
+                    dataSaida = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Logs", x => x.IdLog);
+                    table.ForeignKey(
+                        name: "FK_Logs_Recepcoes_RecepcaoEntradaIdRecepcao",
+                        column: x => x.RecepcaoEntradaIdRecepcao,
+                        principalTable: "Recepcoes",
+                        principalColumn: "IdRecepcao",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Logs_Recepcoes_RecepcaoSaidaIdRecepcao",
+                        column: x => x.RecepcaoSaidaIdRecepcao,
+                        principalTable: "Recepcoes",
+                        principalColumn: "IdRecepcao",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Logs_Visitantes_VisitanteIdVisitante",
+                        column: x => x.VisitanteIdVisitante,
+                        principalTable: "Visitantes",
+                        principalColumn: "IdVisitante",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -83,6 +132,21 @@ namespace SGCC_API.Migrations
                 name: "IX_Locais_LocatarioIdEmpresa",
                 table: "Locais",
                 column: "LocatarioIdEmpresa");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Logs_RecepcaoEntradaIdRecepcao",
+                table: "Logs",
+                column: "RecepcaoEntradaIdRecepcao");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Logs_RecepcaoSaidaIdRecepcao",
+                table: "Logs",
+                column: "RecepcaoSaidaIdRecepcao");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Logs_VisitanteIdVisitante",
+                table: "Logs",
+                column: "VisitanteIdVisitante");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -91,10 +155,16 @@ namespace SGCC_API.Migrations
                 name: "Locais");
 
             migrationBuilder.DropTable(
-                name: "Visitantes");
+                name: "Logs");
 
             migrationBuilder.DropTable(
-                name: "Empresa");
+                name: "Empresas");
+
+            migrationBuilder.DropTable(
+                name: "Recepcoes");
+
+            migrationBuilder.DropTable(
+                name: "Visitantes");
         }
     }
 }
