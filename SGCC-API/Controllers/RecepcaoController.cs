@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 
 namespace SGCC_API.Controllers
 {
-    [Route("/recepcao")]
+    [Route("/Recepcao")]
     [ApiController]
     public class RecepcaoController : ControllerBase
     {
@@ -22,29 +22,7 @@ namespace SGCC_API.Controllers
             _repository = repository;
         }
 
-        [HttpPost("/salvarrecepcao")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult SalvarRecepcao([FromQuery][Required] string NomeDeEntrada)
-        {
-            try
-            {
-                Recepcao recepcao = new Recepcao();
-
-                recepcao.NomeEntrada = NomeDeEntrada;
-                _repository.Recepcoes.Add(recepcao);
-                _repository.SaveChanges();
-                
-                Response.StatusCode = 201;
-                return new ObjectResult("");
-            }
-            catch (Exception)
-            {
-                Response.StatusCode = 404;
-                return new ObjectResult("");
-            }
-        }
-        [HttpGet("/pesquisarvisitante/{cpf}")]
+        [HttpGet("/pesquisarvisitante")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult PesquisarVisitante([FromQuery]string cpf)
@@ -76,9 +54,8 @@ namespace SGCC_API.Controllers
             try
             {
                 var validarCpf = _repository.Visitantes.First(c => c.Cpf == cpf);
-                var validarRecepcao = _repository.Recepcoes.First(c => c.IdRecepcao == IdRecepcao);
 
-                if (validarCpf == null && validarRecepcao == null) //Valida se o CPF tem uma pessoa cadastrada
+                if (validarCpf == null) //Valida se o CPF tem uma pessoa cadastrada
                 {
                     Response.StatusCode = 404;
                     return new ObjectResult("Não existe cpf cadastrado pra esse visitante ou não existe recepcâo com esse Id!");
@@ -91,7 +68,7 @@ namespace SGCC_API.Controllers
                     Response.StatusCode = 404;
                     return new ObjectResult("Não existe cpf cadastrado pra esse visitante!");
                 }
-                var validarDataSaidaLog = _repository.Logs.Last(c => c.Visitante.IdVisitante == validarCpf.IdVisitante);
+                var validarDataSaidaLog = _repository.Visitas.Last(c => c.Visitante.IdVisitante == validarCpf.IdVisitante);
 
                 if(validarDataSaidaLog.dataSaida == null) // valida se ele está dentro do condominio
                 {
@@ -99,13 +76,12 @@ namespace SGCC_API.Controllers
                     return new ObjectResult("O Visitante está dentro do Condominio!");
                 }
 
-                LogRecepcao log = new LogRecepcao(); //Registra um novo LOG
+                Visita log = new Visita(); //Registra um novo LOG
 
-                log.RecepcaoEntrada = _repository.Recepcoes.First(c => c.IdRecepcao == IdRecepcao); ;
                 log.Visitante = validarCpf;
                 log.dataEntrada = DateTime.Now;
 
-                _repository.Logs.Add(log);
+                _repository.Visitas.Add(log);
                 _repository.SaveChanges();
                                 
                 Response.StatusCode = 201;
@@ -126,20 +102,18 @@ namespace SGCC_API.Controllers
             try
             {
                 var validarCpf = _repository.Visitantes.First(c => c.Cpf == cpf);
-                var validarRecepcao = _repository.Recepcoes.First(c => c.IdRecepcao == IdRecepcao);
 
-                if (validarCpf == null && validarRecepcao == null ) //Valida se o CPF tem uma pessoa cadastrada
+                if (validarCpf == null) //Valida se o CPF tem uma pessoa cadastrada
                 {
                     Response.StatusCode = 404;
                     return new ObjectResult("Não existe cpf cadastrado pra esse visitante ou não existe recepcâo com esse Id!");
                 }
 
-                var logrecepcao = _repository.Logs.Last(c => c.Visitante.Cpf == cpf);
+                var logrecepcao = _repository.Visitas.Last(c => c.Visitante.Cpf == cpf);
 
 
-                if (logrecepcao.RecepcaoSaida == null)
+                if (logrecepcao.dataSaida == null)
                 {
-                    logrecepcao.RecepcaoSaida= _repository.Recepcoes.First(c => c.IdRecepcao == IdRecepcao);
                     logrecepcao.dataSaida = DateTime.Now;
                     _repository.SaveChanges();
 

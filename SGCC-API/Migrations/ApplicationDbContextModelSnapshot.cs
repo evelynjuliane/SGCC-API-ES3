@@ -82,7 +82,7 @@ namespace SGCC_API.Migrations
                     b.ToTable("Locais");
                 });
 
-            modelBuilder.Entity("SGCC_API.Model.LogRecepcao", b =>
+            modelBuilder.Entity("SGCC_API.Model.Visita", b =>
                 {
                     b.Property<int>("IdLog")
                         .ValueGeneratedOnAdd()
