@@ -18,24 +18,5 @@ namespace SGCC_API.Services
             _repository = repository;
         }
 
-        public void SalvarVisitante(FilterSalvarVisitante filter)
-        {
-            //Visitante visitante = new Visitante();
-
-            //visitante.Nome = filter.Nome;
-            //visitante.Documento = filter.Documento;
-            //visitante.Email = filter.Email;
-            //visitante.Telefone = filter.Telefone;
-            //visitante.TipoPessoa = filter.TipoDePessoa;
-            //if (filter.TipoDePessoa == "Associado")
-            //    visitante.TipoPessoa = ETipoRecepcao.Associado;
-            //if (filter.TipoDePessoa == "Visitante Cliente")
-            //    visitante.TipoPessoa = ETipoRecepcao.VisitanteCliente;
-            //if (filter.TipoDePessoa == "Visitante Serviço")
-            //    visitante.TipoPessoa = ETipoRecepcao.VisitanteServiço;
-           
-            //_repository.SaveChanges();
-        }
-
     }
 }

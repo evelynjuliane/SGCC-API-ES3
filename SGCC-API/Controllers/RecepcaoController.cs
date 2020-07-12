@@ -16,16 +16,15 @@ namespace SGCC_API.Controllers
     public class RecepcaoController : ControllerBase
     {
         private readonly ApplicationDbContext _repository;
-
         public RecepcaoController(ApplicationDbContext repository)
         {
             _repository = repository;
         }
 
-        [HttpGet("/pesquisarvisitante")]
+        [HttpGet("/Visitante")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult PesquisarVisitante([FromQuery]string cpf)
+        public IActionResult ConsultarCpf([FromQuery]string cpf)
         {
             try { 
                 var visitante = _repository.Visitantes.First(c => c.Cpf == cpf);
@@ -45,7 +44,7 @@ namespace SGCC_API.Controllers
 
         */
         //Post na tabela log autorizarVisita(cpf(se existir), id do local(...)) e se o cpf não estiver dentro do local 
-        [HttpPost("/salvarentradalogrecepcao")]
+        [HttpPost("/Visita")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult SalvarLog([FromQuery][Required]string cpf, [FromQuery][Required]int IdLocal, [Required]int IdRecepcao)
@@ -94,7 +93,7 @@ namespace SGCC_API.Controllers
         }
 
         //Put para registrar saida do visitante
-        [HttpPost("/salvarsaidalogrecepcao")]
+        [HttpPost("/Visita")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult SalvarSaidaLog([FromQuery][Required]string cpf, [Required] int IdRecepcao)
@@ -129,10 +128,10 @@ namespace SGCC_API.Controllers
                 return new ObjectResult("");
             }
         }
-        [HttpPost("/salvarvisitante")]
+        [HttpPost("/Visitante")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult SalvarVisitante([FromQuery]FilterSalvarVisitante filter)
+        public IActionResult CriarVisitante([FromQuery]FilterVisitante filter)
         {
             try
             {

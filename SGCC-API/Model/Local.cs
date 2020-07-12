@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SGCC_API.Model
 {
@@ -14,6 +11,7 @@ namespace SGCC_API.Model
         public int Numero { get; set; }
         public float TamanhoM2 { get; set; }
         public double Valor { get; set; }
+        [Required]
         public Empresa Locatario { get; set; }
         public Empresa Locador { get; set; }
     }

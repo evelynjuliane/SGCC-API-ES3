@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SGCC_API.ViewModel
 {
-    public class FilterSalvarEmpresa
+    public class FilterEmpresa
     {
+        public int IdEmpresa { get; set; }
         public string NomeReal { get; set; }
         public string NomeFantasia { get; set; }
         public string Cnpj { get; set; }
