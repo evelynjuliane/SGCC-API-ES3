@@ -4,6 +4,8 @@ using SGCC_API.Model;
 using SGCC_API.Repository;
 using SGCC_API.ViewModel;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SGCC_API.Controllers
@@ -38,13 +40,14 @@ namespace SGCC_API.Controllers
                         Numero = filterLocal.Numero,
                         TamanhoM2 = filterLocal.TamanhoM2,
                         Valor = filterLocal.Valor,
-                        Locatario = _database.Empresas.First(c => c.IdEmpresa == filterLocal.Locatario),
-                        Locador = _database.Empresas.First(c => c.IdEmpresa == filterLocal.Locador)
+                        Locatario = _database.Empresas.First(e => e.IdEmpresa == filterLocal.Locatario),
+                        Locador = _database.Empresas.First(e => e.IdEmpresa == filterLocal.Locador)
                     };
-                    if (local.Locatario == null)
-                        throw new ArgumentException("Empresa locatária não existente!");
+                    if (local.Locador == null)
+                        throw new ArgumentException("Empresa locadora não existente!");
                     _database.Locais.Add(local);
                 }
+
                 _database.SaveChanges();
 
                 Response.StatusCode = 201;
@@ -55,7 +58,7 @@ namespace SGCC_API.Controllers
                 Response.StatusCode = 404;
                 return new ObjectResult(ae.Message);
             }
-            catch (Exception) { 
+            catch (Exception e) { 
                 Response.StatusCode = 400;
                 return new ObjectResult("");
             }

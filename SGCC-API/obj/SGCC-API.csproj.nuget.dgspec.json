@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\projeto es3\\SGCC-ES3-API\\SGCC-API-ES3\\SGCC-API\\SGCC-API.csproj": {}
+    "C:\\Users\\jvr_1\\Source\\Repos\\SGCC-API-ES3\\SGCC-API\\SGCC-API.csproj": {}
   },
   "projects": {
-    "C:\\projeto es3\\SGCC-ES3-API\\SGCC-API-ES3\\SGCC-API\\SGCC-API.csproj": {
+    "C:\\Users\\jvr_1\\Source\\Repos\\SGCC-API-ES3\\SGCC-API\\SGCC-API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\projeto es3\\SGCC-ES3-API\\SGCC-API-ES3\\SGCC-API\\SGCC-API.csproj",
+        "projectUniqueName": "C:\\Users\\jvr_1\\Source\\Repos\\SGCC-API-ES3\\SGCC-API\\SGCC-API.csproj",
         "projectName": "SGCC-API",
-        "projectPath": "C:\\projeto es3\\SGCC-ES3-API\\SGCC-API-ES3\\SGCC-API\\SGCC-API.csproj",
-        "packagesPath": "C:\\Users\\pedro\\.nuget\\packages\\",
-        "outputPath": "C:\\projeto es3\\SGCC-ES3-API\\SGCC-API-ES3\\SGCC-API\\obj\\",
+        "projectPath": "C:\\Users\\jvr_1\\Source\\Repos\\SGCC-API-ES3\\SGCC-API\\SGCC-API.csproj",
+        "packagesPath": "C:\\Users\\jvr_1\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jvr_1\\Source\\Repos\\SGCC-API-ES3\\SGCC-API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\pedro\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\jvr_1\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -85,7 +85,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
         }
       }
     }

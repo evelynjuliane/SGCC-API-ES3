@@ -93,7 +93,7 @@ namespace SGCC_API.Controllers
         }
 
         //Put para registrar saida do visitante
-        [HttpPost("/Visita")]
+        [HttpPost("/VisitaSaida")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult SalvarSaidaLog([FromQuery][Required]string cpf, [Required] int IdRecepcao)
