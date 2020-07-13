@@ -31,8 +31,7 @@ namespace SGCC_API.Controllers
                 return Ok(visitante);
             }catch (Exception)
             {
-                Response.StatusCode = 404;
-                return new ObjectResult("");
+                return BadRequest();
             }
         }
 
@@ -47,70 +46,45 @@ namespace SGCC_API.Controllers
         [HttpPost("/Visita")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult SalvarLog([FromQuery][Required]string cpf, [FromQuery][Required]int IdLocal)
+        public IActionResult RegistrarVisita([FromQuery][Required]string cpf)
         {
-
             try
             {
-                var validarCpf = _database.Visitantes.First(c => c.Cpf == cpf);
+                Visitante visitante = _database.Visitantes.First(v => v.Cpf == cpf);
 
-                if (validarCpf == null) //Valida se o CPF tem uma pessoa cadastrada
+                if (visitante == null) //Valida se o CPF tem uma pessoa cadastrada
+                    throw new ArgumentException("Não existe cpf cadastrado pra esse visitante!");
+                Visita visita = null;
+                try
                 {
-                    Response.StatusCode = 404;
-                    return new ObjectResult("Não existe cpf cadastrado pra esse visitante ou não existe recepcâo com esse Id!");
+                    visita = _database.Visitas.First(v => v.Visitante.IdVisitante == visitante.IdVisitante);
                 }
+                catch (Exception){ }
 
-                var validar = _database.Locais.First(c => c.IdLocal == IdLocal);
+                String mensagem;
 
-                if(validarCpf == null) //Valida se o CPF tem uma pessoa cadastrada
+                if (visita == null)
                 {
-                    Response.StatusCode = 404;
-                    return new ObjectResult("Não existe cpf cadastrado pra esse visitante!");
+                    visita = new Visita()
+                    {
+                        Visitante = visitante,
+                        dataEntrada = DateTime.Now
+                    };
+                    _database.Visitas.Add(visita);
+                    mensagem = "Entrando";
                 }
-                var validarDataSaidaLog = _database.Visitas.Last(c => c.Visitante.IdVisitante == validarCpf.IdVisitante);
-
-                if(validarDataSaidaLog.dataSaida == null) // valida se ele está dentro do condominio
+                else
                 {
-                    Response.StatusCode = 204;
-                    return new ObjectResult("O Visitante está dentro do Condominio!");
+                    visita.dataSaida = DateTime.Now;
+                    mensagem = "Saindo";
                 }
-
-                Visita log = new Visita(); //Registra um novo LOG
-
-                log.Visitante = validarCpf;
-                log.dataEntrada = DateTime.Now;
-
-                _database.Visitas.Add(log);
                 _database.SaveChanges();
-                                
-                Response.StatusCode = 201;
-                ////////////////////////////////////////////////////////////////////////////
-                validarCpf = _database.Visitantes.First(c => c.Cpf == cpf);
 
-                if (validarCpf == null) //Valida se o CPF tem uma pessoa cadastrada
-                {
-                    Response.StatusCode = 404;
-                    return new ObjectResult("Não existe cpf cadastrado pra esse visitante ou não existe recepcâo com esse Id!");
-                }
-
-                var logrecepcao = _database.Visitas.Last(c => c.Visitante.Cpf == cpf);
-
-
-                if (logrecepcao.dataSaida == null)
-                {
-                    logrecepcao.dataSaida = DateTime.Now;
-                    _database.SaveChanges();
-
-                    Response.StatusCode = 201;
-                    return new ObjectResult("Saída Salva com sucesso!");
-                }
-                Response.StatusCode = 204;
-                return new ObjectResult("O visitante já saiu!!");
+                return Ok(mensagem);
             }
             catch (Exception)
             {
-                Response.StatusCode = 404;
-                return new ObjectResult("");
+                return BadRequest();
             }
         }
         [HttpPost("/Visitante")]
@@ -121,6 +95,9 @@ namespace SGCC_API.Controllers
             try
             {
                 Visitante visitante = new Visitante();
+
+                if (String.IsNullOrEmpty(filter.Nome))
+                    throw new ArgumentException("Nome vazio ou não declarado.");
 
                 visitante.Nome = filter.Nome;
                 visitante.Cpf = filter.Cpf;

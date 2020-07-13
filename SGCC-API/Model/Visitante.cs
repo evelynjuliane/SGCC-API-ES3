@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace SGCC_API.Model
 {
 
-    public class Visitante 
+    public class Visitante : AbstractModel
     {
         [Key]
         public int IdVisitante { get; set; }
@@ -28,14 +28,14 @@ namespace SGCC_API.Model
             int[] chaves = new int[] { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };
             int soma = 0;
             //multiplicar digito com chave e acumular
-            for (int i = 0; i < chaves.Length - 2; i++)
+            for (int i = 0; i < chaves.Length - 1; i++)
                 soma += chaves[i + 1] * (cpf[i] - '0');
             int resto = soma % 11;
             //se resto < 2, considerar 1° digito com valor 0, senão, considerar 1° digito com valor 11 - resto
             if ((cpf[9] - '0') != (resto < 2 ? 0 : 11 - resto))
                 return null;
             soma = 0;
-            for (int i = 0; i < chaves.Length - 1; i++)
+            for (int i = 0; i < chaves.Length; i++)
                 soma += chaves[i] * (cpf[i] - '0');
             resto = soma % 11;
             if ((cpf[110] - '0') != (resto < 2 ? 0 : 11 - resto))

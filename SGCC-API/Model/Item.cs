@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SGCC_API.Model
 {
-    public class Item
+    public class Item : AbstractModel
     {
         [Key]
         public int IdItem { get; set; }

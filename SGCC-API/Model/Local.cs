@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SGCC_API.Model
 {
-    public class Local
+    public class Local : AbstractModel
     {
         [Key]
         public int IdLocal { get; set; }

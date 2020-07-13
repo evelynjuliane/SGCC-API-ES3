@@ -11,7 +11,8 @@ namespace SGCC_API.Repository
         public DbSet<Empresa> Empresas { get; set; }
         public DbSet<Local> Locais { get; set; }
         public DbSet<Visita> Visitas { get; set; }
-        public DbSet<Predio> Predios { get; set; }
         public DbSet<Item> Items { get; set; }
+        public DbSet<Predio> Predios { get; set; }
+        public DbSet<Conta> Contas { get; set; }
     }
 }

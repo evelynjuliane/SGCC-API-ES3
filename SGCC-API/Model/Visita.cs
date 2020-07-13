@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace SGCC_API.Model
 {
-    public class Visita
+    public class Visita : AbstractModel
     {
         [Key]
-        public int IdLog { get; set; }
+        public int IdVisita { get; set; }
         public Visitante Visitante { get; set; }
         public DateTime dataEntrada { get; set; }
         public DateTime dataSaida { get; set; }

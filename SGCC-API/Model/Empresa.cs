@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SGCC_API.Model
 {
-    public class Empresa
+    public class Empresa : AbstractModel
     {
         [Key]
         public int IdEmpresa { get; set; }

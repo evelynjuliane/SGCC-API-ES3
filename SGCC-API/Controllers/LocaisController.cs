@@ -23,9 +23,11 @@ namespace SGCC_API.Controllers
         [HttpPost("/Predio")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult CriarPredio([FromBody]FilterPredio filter)
         {
            try{
+
                 if (filter.NumeroPredio <= 0)
                     throw new ArgumentException("Número de prédio deve ser um número natural.");
 
@@ -33,7 +35,15 @@ namespace SGCC_API.Controllers
                 if (filter.Bloco < 'A' || filter.Bloco > 'Z')
                     throw new ArgumentException("Letra de bloco inválida.");
 
-                if(filter.NumeroPredio <= 0)
+                try 
+                {
+                    if (_database.Predios.First(p => p.Bloco == filter.Bloco && p.NumeroPredio == filter.NumeroPredio) != null)
+                        throw new ArgumentException("Prédio já existente com os mesmos identificadores de bloco e numero.");
+                }
+                catch (ArgumentException ae) { throw ae; } catch (Exception e) { }
+                
+
+                if (filter.NumAndares <= 0)
                     throw new ArgumentException("Número de andares deve ser um número natural.");
 
                 Predio predio = new Predio
@@ -69,14 +79,20 @@ namespace SGCC_API.Controllers
                         Andar = filterLocal.Andar,
                         Numero = filterLocal.Numero,
                         TamanhoM2 = filterLocal.TamanhoM2,
-                        Valor = filterLocal.Valor,
-                        Locatario = _database.Empresas.First(e => e.IdEmpresa == filterLocal.Locatario),
-                        Locador = _database.Empresas.First(e => e.IdEmpresa == filterLocal.Locador)
+                        Valor = filterLocal.Valor
                     };
+
+                    local.Locador = _database.Empresas.First(e => e.IdEmpresa == filterLocal.Locador);
+
+                    if(filterLocal.Locatario == null)
+                        local.Locatario = local.Locador;
+                    else
+                        local.Locatario = _database.Empresas.First(e => e.IdEmpresa == filterLocal.Locatario);
+
                     if (local.Locador == null)
                         throw new ArgumentException("Empresa locadora não existente!");
 
-                    if (local.Locador == null && filterLocal.Locatario != null)
+                    if (local.Locatario == null)
                         throw new ArgumentException("Empresa locatária não existente!");
 
                     _database.Locais.Add(local);
@@ -86,16 +102,14 @@ namespace SGCC_API.Controllers
                 _database.SaveChanges();
 
                 Response.StatusCode = 201;
-                return new ObjectResult("");
+                return Created(Request.Path, predio);
             }
             catch (ArgumentException ae)
             {
-                Response.StatusCode = 400;
-                return new ObjectResult(ae.Message);
+                return BadRequest(ae.Message);
             }
-            catch (Exception) { 
-                Response.StatusCode = 404;
-                return new ObjectResult("");
+            catch (Exception e) { 
+                return NotFound();
             }
         }
 
@@ -106,9 +120,7 @@ namespace SGCC_API.Controllers
         {
             try
             {
-                filter.Cnpj = Empresa.ValidarCnpj(filter.Cnpj);
-                if (filter.Cnpj == null)
-                    throw new ArgumentException("Cnpj inválido");
+                
 
                 if (String.IsNullOrEmpty(filter.NomeReal) || filter.NomeReal.Length < 3)
                     throw new ArgumentException("Tamanho do nome insuficiente.");
@@ -116,8 +128,6 @@ namespace SGCC_API.Controllers
                 if (filter.AgenciaBancaria <= 0 || filter.ContaBancaria <= 0)
                     throw new ArgumentException("Dados bancários inválidos");
 
-
-                //////////////////////////////////////////
                 if (String.IsNullOrEmpty(filter.NomeFantasia))
                     filter.NomeFantasia = filter.NomeReal;
 
@@ -131,22 +141,24 @@ namespace SGCC_API.Controllers
                     ContaBancaria = filter.ContaBancaria
                 };
 
+                empresa.Cnpj = Empresa.ValidarCnpj(filter.Cnpj);
+                if (empresa.Cnpj == null)
+                    throw new ArgumentException("Cnpj inválido");
+
                 _database.Empresas.Add(empresa);
                 _database.SaveChanges();
 
-                Response.StatusCode = 201;
-                return new ObjectResult("");
+                return Created(Request.Path, empresa);
             }
             catch (Exception e) { 
-                Response.StatusCode = 400;
-                return new ObjectResult("");
+                return BadRequest();
             }
         }
 
         [HttpPut("/Empresa")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AlterarEmpresa([FromQuery] int IdEmpresa, FilterEmpresa filter)
+        public IActionResult AlterarEmpresa([FromQuery] int IdEmpresa, [FromBody]FilterEmpresa filter)
         {
             try
             {
@@ -159,22 +171,14 @@ namespace SGCC_API.Controllers
                 empresa.AgenciaBancaria = filter.AgenciaBancaria;
                 empresa.ContaBancaria = filter.ContaBancaria;
 
-
                 _database.Empresas.Add(empresa);
                 _database.SaveChanges();
 
-                Response.StatusCode = 201;
-                return new ObjectResult("");
-            }
-            catch (ArgumentException ae)
-            {
-                Response.StatusCode = 400;
-                return new ObjectResult(ae.Message);
+                return Ok();
             }
             catch (Exception)
-            {
-                Response.StatusCode = 500;
-                return new ObjectResult("Erro inesperado.");
+            {            
+                return BadRequest();
             }
         }
 
@@ -187,8 +191,7 @@ namespace SGCC_API.Controllers
             {
                 Empresa empresa = _database.Empresas.First(c => c.IdEmpresa == idEmpresa);
 
-                Response.StatusCode = 200;
-                return new ObjectResult(empresa);
+                return Ok(empresa);
             }
             catch (Exception)
             {
