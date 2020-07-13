@@ -23,9 +23,19 @@ namespace SGCC_API.Controllers
         [HttpPost("/Predio")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult CriarPredio([FromQuery]FilterPredio filter)
+        public IActionResult CriarPredio([FromBody]FilterPredio filter)
         {
            try{
+                if (filter.NumeroPredio <= 0)
+                    throw new ArgumentException("Número de prédio deve ser um número natural.");
+
+                filter.Bloco = Char.ToUpper(filter.Bloco);
+                if (filter.Bloco < 'A' || filter.Bloco > 'Z')
+                    throw new ArgumentException("Letra de bloco inválida.");
+
+                if(filter.NumeroPredio <= 0)
+                    throw new ArgumentException("Número de andares deve ser um número natural.");
+
                 Predio predio = new Predio
                 {
                     NumeroPredio = filter.NumeroPredio,
@@ -33,7 +43,27 @@ namespace SGCC_API.Controllers
                     NumAndares = filter.NumAndares
                 };
                 _database.Predios.Add(predio);
+                int i = 0;
                 foreach (FilterLocal filterLocal in filter.locais) {
+
+                    if (filterLocal.Andar < 0 || filterLocal.Andar >= filter.NumAndares)
+                        throw new ArgumentException("Local com andar inválido");
+
+                    if (filterLocal.Numero <= 0)
+                        throw new ArgumentException("Local com andar inválido");
+
+                    int j = 0;
+                    foreach (FilterLocal ls in filter.locais)
+                        if(i != j++)
+                            if (ls.Andar == filterLocal.Andar && ls.Numero == filterLocal.Numero) 
+                                throw new ArgumentException("Locais com número e andar repetidos.");
+
+                    if (filterLocal.TamanhoM2 < 0)
+                        throw new ArgumentException("Local com tamanho negativo.");
+
+                    if(filterLocal.Valor < 0)
+                        throw new ArgumentException("Local com valor negativo.");
+
                     Local local = new Local
                     {
                         Andar = filterLocal.Andar,
@@ -45,7 +75,12 @@ namespace SGCC_API.Controllers
                     };
                     if (local.Locador == null)
                         throw new ArgumentException("Empresa locadora não existente!");
+
+                    if (local.Locador == null && filterLocal.Locatario != null)
+                        throw new ArgumentException("Empresa locatária não existente!");
+
                     _database.Locais.Add(local);
+                    i++;
                 }
 
                 _database.SaveChanges();
@@ -55,11 +90,11 @@ namespace SGCC_API.Controllers
             }
             catch (ArgumentException ae)
             {
-                Response.StatusCode = 404;
+                Response.StatusCode = 400;
                 return new ObjectResult(ae.Message);
             }
-            catch (Exception e) { 
-                Response.StatusCode = 400;
+            catch (Exception) { 
+                Response.StatusCode = 404;
                 return new ObjectResult("");
             }
         }
@@ -71,6 +106,21 @@ namespace SGCC_API.Controllers
         {
             try
             {
+                filter.Cnpj = Empresa.ValidarCnpj(filter.Cnpj);
+                if (filter.Cnpj == null)
+                    throw new ArgumentException("Cnpj inválido");
+
+                if (String.IsNullOrEmpty(filter.NomeReal) || filter.NomeReal.Length < 3)
+                    throw new ArgumentException("Tamanho do nome insuficiente.");
+
+                if (filter.AgenciaBancaria <= 0 || filter.ContaBancaria <= 0)
+                    throw new ArgumentException("Dados bancários inválidos");
+
+
+                //////////////////////////////////////////
+                if (String.IsNullOrEmpty(filter.NomeFantasia))
+                    filter.NomeFantasia = filter.NomeReal;
+
                 Empresa empresa = new Empresa
                 {
                     NomeFantasia = filter.NomeFantasia,
@@ -81,18 +131,13 @@ namespace SGCC_API.Controllers
                     ContaBancaria = filter.ContaBancaria
                 };
 
-                if (validarCnpj(filter.Cnpj))
-                    empresa.Cnpj = filter.Cnpj;
-                else
-                    throw new ArgumentException("Cnpj inválido");
-
                 _database.Empresas.Add(empresa);
                 _database.SaveChanges();
 
                 Response.StatusCode = 201;
                 return new ObjectResult("");
             }
-            catch (Exception) { 
+            catch (Exception e) { 
                 Response.StatusCode = 400;
                 return new ObjectResult("");
             }
@@ -101,11 +146,11 @@ namespace SGCC_API.Controllers
         [HttpPut("/Empresa")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult AlterarEmpresa(FilterEmpresa filter)
+        public IActionResult AlterarEmpresa([FromQuery] int IdEmpresa, FilterEmpresa filter)
         {
             try
             {
-                Empresa empresa = _database.Empresas.First(c => c.IdEmpresa == filter.IdEmpresa);
+                Empresa empresa = _database.Empresas.First(c => c.IdEmpresa == IdEmpresa);
 
                 empresa.NomeFantasia = filter.NomeFantasia;
                 empresa.NomeReal = filter.NomeReal;
@@ -183,7 +228,7 @@ namespace SGCC_API.Controllers
                     else
                         local.Locatario = empresa;
                 else
-                    throw new Exception();
+                    throw new NullReferenceException();
 
                 _database.SaveChanges();
                 Response.StatusCode = 200;
@@ -199,33 +244,6 @@ namespace SGCC_API.Controllers
                 Response.StatusCode = 404;
                 return new ObjectResult("Empresa inexistente!");
             }
-        }
-
-        private bool validarCnpj(String cnpj)
-        {
-            cnpj = cnpj.Replace("-", "").Replace("/", "").Replace(".", "");
-            if (cnpj.Length != 14)
-                return false;
-            foreach (char c in cnpj)
-                if (!Char.IsDigit(c))//apenas digitos numéricos são permitidos
-                    return false;
-            //chaves padrão na checagem
-            char[] chaves = new char[] { '6', '5', '4', '3', '2', '9', '8', '7', '6', '5', '4', '3', '2' };
-            int soma = 0;
-            //multiplicar digito com chave e acumular
-            for (int i = 0; i < chaves.Length - 1; i++)
-                soma += (chaves[i + 1] - '0') * (cnpj[i] - '0');
-            int resto = soma % 11;
-            //se resto < 2, considerar 1° digito com valor 0, senão, considerar 1° digito com valor 11 - resto
-            if ((cnpj[12] - '0') != (resto < 2 ? 0 : 11 - resto))
-                return false;
-            soma = 0;
-            for (int i = 0; i < chaves.Length; i++)
-                soma += (chaves[i] - '0') * (cnpj[i] - '0');
-            resto = soma % 11;
-            if ((cnpj[13] - '0') != (resto < 2 ? 0 : 11 - resto))
-                return false;
-            return true;
         }
     }
 }

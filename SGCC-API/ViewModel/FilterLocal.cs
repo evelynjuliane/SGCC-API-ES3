@@ -8,7 +8,8 @@ namespace SGCC_API.ViewModel
         public int Numero { get; set; }
         public float TamanhoM2 { get; set; }
         public double Valor { get; set; }
-        public int Locatario { get; set; }
         public int Locador { get; set; }
+        public int? Locatario { get; set; }
+        
     }
 }
